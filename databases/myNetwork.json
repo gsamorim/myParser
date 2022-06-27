@@ -1,0 +1,25 @@
+{
+  "nodes": [
+    { "id": "a" },
+    { "id": "b" },
+    { "id": "c" },
+    { "id": "d" },
+    { "id": "e" }
+  ],
+  "links": [
+    { "source": "a", "target": "b", "value": 50 },
+    { "source": "b", "target": "c", "value": 75 },
+    { "source": "c", "target": "a", "value": 90 },
+    { "source": "c", "target": "d", "value": 20 }
+  ],
+  "behaviors": [
+    { "id": 1, "description": "agua é azul" },
+    { "id": 2, "description": "raiz>nutela" },
+    { "id": 3, "description": "ataque>defesa" }
+  ],
+  "assumptions": [
+    { "node": "a", "assumption": 1 },
+    { "node": "b", "assumption": 2 },
+    { "node": "d", "assumption": 3 }
+  ]
+}
