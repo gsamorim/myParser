@@ -8,12 +8,17 @@ const tokenizer = new Tokenizer();
 
 //const program = `42`;
 //const program = `42 1`;
-const program = `42"
-cu"1`;
+// const program = `42"
+// bu"1`;
+//const program = `42 "àb%&c" ddd 1`;
+//const program = `42 "àb%&c" ddd() 1, [] & - # ! > <=:.`;
 //const program = ` 42`; //tab
 //const program = ` 42`; //space
-//const program = `"42"`;
+//const program = ` "42"`;
 //const program = `"hellow my brodi"`;
+const program = `[adopt] ([adopt]Phi)`;
+//const program = `42`;
+//const program = `42`;
 
 tokenizer.tokenize(program);
 

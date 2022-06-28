@@ -1,3 +1,17 @@
+/**
+ * Priority
+ * EOF
+ * Empty Space
+ * Word
+ * Comma
+ * Parentheses
+ * Symbols
+ * Brackets
+ * Angle Brackets
+ * Variables
+ * Number
+ * String
+ */
 // move from char to char
 // classify substrings as:
 // 	EOF
@@ -65,11 +79,61 @@ class Tokenizer {
     return false;
   }
 
+  checkIfLetter(ccode) {
+    if ((ccode >= 65 && ccode <= 90) || (ccode >= 97 && ccode <= 122))
+      return true;
+    return false;
+  }
+
+  checkIfOpenParentheses(ccode) {
+    if (ccode === 40) return true;
+    return false;
+  }
+
+  checkIfCloseParentheses(ccode) {
+    if (ccode === 41) return true;
+    return false;
+  }
+
+  checkIfOpenBracket(ccode) {
+    if (ccode === 91) return true;
+    return false;
+  }
+
+  checkIfCloseBracket(ccode) {
+    if (ccode === 93) return true;
+    return false;
+  }
+
+  checkIfDot(ccode) {
+    if (ccode === 46) return true;
+    return false;
+  }
+
+  checkIfComma(ccode) {
+    if (ccode === 44) return true;
+    return false;
+  }
+
+  checkIfSymbol(ccode) {
+    if (
+      (ccode >= 58 && ccode <= 64) ||
+      ccode === 33 ||
+      ccode === 35 ||
+      ccode === 36 ||
+      ccode === 38 ||
+      ccode === 45 ||
+      ccode === 95 ||
+      ccode === 124
+    )
+      return true;
+    return false;
+  }
+
   /**
    * Obtains next token.
    */
   getNextToken(str) {
-    console.log("Getting next token...: " + str);
     let cursor = 0;
 
     //check for Empty Spaces
@@ -127,9 +191,85 @@ class Tokenizer {
       }
     }
 
-    console.log("not found char");
+    //check for Word
+    //65~90 or 97~122
+    if (this.checkIfLetter(str.charCodeAt(cursor))) {
+      let word = str[cursor++];
+      while (this.checkIfLetter(str.charCodeAt(cursor))) word += str[cursor++];
+      this._tokenLenght = cursor;
+      return {
+        type: "WORD",
+        value: word,
+      };
+    }
+
+    //check for Parentheses
+    if (this.checkIfOpenParentheses(str.charCodeAt(cursor))) {
+      this._tokenLenght = 1;
+      return {
+        type: "OPAREN",
+        value: "(",
+      };
+    }
+    if (this.checkIfCloseParentheses(str.charCodeAt(cursor))) {
+      this._tokenLenght = 1;
+      return {
+        type: "CPAREN",
+        value: ")",
+      };
+    }
+
+    //check for Brackets
+    if (this.checkIfOpenBracket(str.charCodeAt(cursor))) {
+      this._tokenLenght = 1;
+      return {
+        type: "OBRACKET",
+        value: "[",
+      };
+    }
+    if (this.checkIfCloseBracket(str.charCodeAt(cursor))) {
+      this._tokenLenght = 1;
+      return {
+        type: "CBRACKET",
+        value: "]",
+      };
+    }
+
+    //check for Dot
+    if (this.checkIfComma(str.charCodeAt(cursor))) {
+      this._tokenLenght = 1;
+      return {
+        type: "COMMA",
+        value: ",",
+      };
+    }
+
+    //check for Symbol
+    if (this.checkIfSymbol(str.charCodeAt(cursor))) {
+      this._tokenLenght = 1;
+      return {
+        type: "SYMBOL",
+        value: str[cursor],
+      };
+    }
+
+    //check for Dot
+    if (this.checkIfDot(str.charCodeAt(cursor))) {
+      this._tokenLenght = 1;
+      return {
+        type: "DOT",
+        value: ".",
+      };
+    }
+
+    //not any of those - ERROR!
     this._tokenLenght = 1;
-    return null;
+    return {
+      type: "ERROR",
+      description: "Error: General Error.",
+      value: str[cursor],
+      position: cursor,
+    };
   }
 
   tokenize(str) {
@@ -143,6 +283,7 @@ class Tokenizer {
         if (token.type == "ERROR") {
           token.position += walked;
           tokens.push(token);
+          break;
         } else {
           token.start = walked;
           token.length = this._tokenLenght;
@@ -154,8 +295,20 @@ class Tokenizer {
       walked += this._tokenLenght;
       str = this.prune(str);
     }
-    console.log("finish");
-    console.log(JSON.stringify(tokens, null, 2));
+    let json = JSON.stringify(tokens, null, 2);
+    this.tokensToTxt(json);
+  }
+
+  tokensToTxt(json) {
+    // Requiring fs module in which
+    // writeFile function is defined.
+    const fs = require("fs");
+
+    // Write data in 'Output.txt' .
+    fs.writeFile("Output.json", json, (err) => {
+      // In case of a error throw err.
+      if (err) throw err;
+    });
   }
 }
 
