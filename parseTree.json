@@ -1,0 +1,79 @@
+{
+  "type": "Program",
+  "body": {
+    "type": "AndStm",
+    "child": [
+      {
+        "type": "BlockStm",
+        "child": {
+          "type": "AndStm",
+          "child": [
+            {
+              "type": "NotStm",
+              "child": {
+                "type": "AdoptStm",
+                "child": {
+                  "type": "NeighborStm",
+                  "agent1": {
+                    "type": "WORD",
+                    "value": "a",
+                    "start": 11,
+                    "length": 1
+                  },
+                  "agent2": {
+                    "type": "WORD",
+                    "value": "b",
+                    "start": 13,
+                    "length": 1
+                  }
+                }
+              }
+            },
+            {
+              "type": "NotStm",
+              "child": {
+                "type": "AdoptStm",
+                "child": {
+                  "type": "NeighborStm",
+                  "agent1": {
+                    "type": "WORD",
+                    "value": "a",
+                    "start": 27,
+                    "length": 1
+                  },
+                  "agent2": {
+                    "type": "WORD",
+                    "value": "b",
+                    "start": 29,
+                    "length": 1
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "NotStm",
+        "child": {
+          "type": "AdoptStm",
+          "child": {
+            "type": "NeighborStm",
+            "agent1": {
+              "type": "WORD",
+              "value": "a",
+              "start": 44,
+              "length": 1
+            },
+            "agent2": {
+              "type": "WORD",
+              "value": "b",
+              "start": 46,
+              "length": 1
+            }
+          }
+        }
+      }
+    ]
+  }
+}

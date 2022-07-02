@@ -1,51 +1,31 @@
 /**
- * Priority
- * EOF
- * Empty Space
- * Word
- * Comma
- * Parentheses
- * Symbols
- * Brackets
- * Angle Brackets
- * Variables
- * Number
- * String
+ * ----Priority List:
+ * 0      EOF            13
+ * 1      Empty Space    9/32
+ * 2      Operator       65~90                      [A-Z]{1,3}
+ * 3      Word           97~122 65~90\97~122\47~57  [a-z][A-Z\a-z\0-9]{0,7}
+ * 4      Number         47~57                      [0-9]{1,3}
+ * 5      Comma          44    ,
+ * 6      Not            33    !
+ * 7      And            38    &   ampersand
+ * 8-9    Parentheses    40/41 ()
+ * 10-11  Brackets       91/93 []
+ * 12-13  Angle Brackets 60/62 <>
+ * let tokenTypes = [
+      { id: 2, type: "OPERATOR" },
+      { id: 3, type: "WORD" },
+      { id: 4, type: "NUMBER" },
+      { id: 5, type: "COMMA" },
+      { id: 6, type: "NOT" },
+      { id: 7, type: "AND" },
+      { id: 8, type: "OPAREN" },
+      { id: 9, type: "CPAREN" },
+      { id: 10, type: "OBRACKET" },
+      { id: 11, type: "CBRACKET" },
+      { id: 12, type: "OANGB" },
+      { id: 13, type: "CANGB" },
+    ];
  */
-// move from char to char
-// classify substrings as:
-// 	EOF
-// 	Number
-// 	String
-// 		(start and end with double quotes)
-// 		(32~255? for the rest)
-// 		(must block 92, '\')
-// 	Word
-// 		(letters from start to end)
-// 		(first is uppercase 65~90)
-// 		(rest 65~90 or 97~122)
-// 			Update/Evolve command
-// 	dot
-// 		(46 char code)		.
-// 	comma
-// 		(44 char code)		,
-// 	bracket
-// 		left round		(
-// 		right round		)
-// 		left square		[
-// 		right square		]
-// 	angle brackets
-// 		left	(langle)	<
-// 		right	(rangle)	>
-// 	symbols
-// 		||		or
-// 		&&		and
-// 		==		equals
-// 		!=		different
-// 		->		implication
-// 		:=		consequence
-// 	Variables (or statement storer)
-// 		(uppercase single char 65~90)
 
 /**
  * This tokenizer model tokenize everything before any parsing
@@ -53,14 +33,25 @@
 class Tokenizer {
   _tokenLenght;
 
+  //Method that slice a received string, removing the initial part, up to the paramether
   prune(str) {
     let aux = this._tokenLenght;
     this._tokenLenght = 0;
     return str.slice(aux);
   }
 
-  checkIfEmpty(ccode) {
-    if (ccode == 9 || ccode == 32) return true;
+  checkIfEmpty(char) {
+    if (char === " " || char === "  ") return true;
+    return false;
+  }
+
+  checkIfUpperCase(ccode) {
+    if (ccode >= 65 && ccode <= 90) return true;
+    return false;
+  }
+
+  checkIfLowerCase(ccode) {
+    if (ccode >= 97 && ccode <= 122) return true;
     return false;
   }
 
@@ -69,64 +60,48 @@ class Tokenizer {
     return false;
   }
 
-  checkIfQuote(ccode) {
-    if (ccode === 34) return true;
+  checkIfComma(char) {
+    if (char === ",") return true;
     return false;
   }
 
-  checkIfString(ccode) {
-    if (ccode >= 32 && ccode <= 255 && ccode != 92) return true;
+  checkIfNot(char) {
+    if (char === "!") return true;
     return false;
   }
 
-  checkIfLetter(ccode) {
-    if ((ccode >= 65 && ccode <= 90) || (ccode >= 97 && ccode <= 122))
-      return true;
+  checkIfAnd(char) {
+    if (char === "&") return true;
     return false;
   }
 
-  checkIfOpenParentheses(ccode) {
-    if (ccode === 40) return true;
+  checkIfOpenParentheses(char) {
+    if (char === "(") return true;
     return false;
   }
 
-  checkIfCloseParentheses(ccode) {
-    if (ccode === 41) return true;
+  checkIfCloseParentheses(char) {
+    if (char === ")") return true;
     return false;
   }
 
-  checkIfOpenBracket(ccode) {
-    if (ccode === 91) return true;
+  checkIfOpenBracket(char) {
+    if (char === "[") return true;
     return false;
   }
 
-  checkIfCloseBracket(ccode) {
-    if (ccode === 93) return true;
+  checkIfCloseBracket(char) {
+    if (char === "]") return true;
     return false;
   }
 
-  checkIfDot(ccode) {
-    if (ccode === 46) return true;
+  checkIfOpenAngleBracket(char) {
+    if (char === "<") return true;
     return false;
   }
 
-  checkIfComma(ccode) {
-    if (ccode === 44) return true;
-    return false;
-  }
-
-  checkIfSymbol(ccode) {
-    if (
-      (ccode >= 58 && ccode <= 64) ||
-      ccode === 33 ||
-      ccode === 35 ||
-      ccode === 36 ||
-      ccode === 38 ||
-      ccode === 45 ||
-      ccode === 95 ||
-      ccode === 124
-    )
-      return true;
+  checkIfCloseAngleBracket(char) {
+    if (char === ">") return true;
     return false;
   }
 
@@ -137,15 +112,44 @@ class Tokenizer {
     let cursor = 0;
 
     //check for Empty Spaces
-    if (this.checkIfEmpty(str.charCodeAt(cursor))) {
+    if (this.checkIfEmpty(str[cursor])) {
       this._tokenLenght = 1;
       return null;
+    }
+
+    //check for Operators
+    if (this.checkIfUpperCase(str.charCodeAt(cursor))) {
+      let operator = str[cursor++];
+      while (this.checkIfUpperCase(str.charCodeAt(cursor)) && cursor <= 2)
+        operator += str[cursor++];
+      this._tokenLenght = cursor;
+      return {
+        type: "OPERATOR",
+        value: operator,
+      };
+    }
+
+    //check for Word
+    if (this.checkIfLowerCase(str.charCodeAt(cursor))) {
+      let word = str[cursor++];
+      while (
+        (this.checkIfLowerCase(str.charCodeAt(cursor)) ||
+          this.checkIfUpperCase(str.charCodeAt(cursor)) ||
+          this.checkIfNumber(str.charCodeAt(cursor))) &&
+        cursor <= 6
+      )
+        word += str[cursor++];
+      this._tokenLenght = cursor;
+      return {
+        type: "WORD",
+        value: word,
+      };
     }
 
     //check for Numbers
     if (this.checkIfNumber(str.charCodeAt(cursor))) {
       let number = str[cursor++];
-      while (this.checkIfNumber(str.charCodeAt(cursor)))
+      while (this.checkIfNumber(str.charCodeAt(cursor)) && cursor <= 2)
         number += str[cursor++];
       this._tokenLenght = cursor;
       return {
@@ -154,64 +158,42 @@ class Tokenizer {
       };
     }
 
-    //check for string
-    //start+finish with 34, cannot 92, 32~255
-    //if first quote
-    if (this.checkIfQuote(str.charCodeAt(cursor))) {
-      cursor++;
-      for (let wstring = ""; cursor < str.length; cursor++) {
-        //if second quote found
-        if (this.checkIfQuote(str.charCodeAt(cursor))) {
-          if (cursor == 1) {
-            this._tokenLenght = 2;
-            return null; //empty string
-          } else {
-            this._tokenLenght = cursor + 1;
-            return {
-              type: "STRING",
-              value: wstring,
-            };
-          }
-        }
-        //if possible charcode add to substring
-        else if (this.checkIfString(str.charCodeAt(cursor))) {
-          wstring += str[cursor];
-        }
-        //string malfunction
-        else {
-          wstring += str[cursor];
-          this._tokenLenght = cursor + 1;
-          return {
-            type: "ERROR",
-            description: "Error: String malfunction after quote.",
-            value: wstring,
-            position: cursor,
-          };
-        }
-      }
+    //check for comma
+    if (this.checkIfComma(str[cursor])) {
+      this._tokenLenght = 1;
+      return {
+        type: "COMMA",
+        value: ",",
+      };
     }
 
-    //check for Word
-    //65~90 or 97~122
-    if (this.checkIfLetter(str.charCodeAt(cursor))) {
-      let word = str[cursor++];
-      while (this.checkIfLetter(str.charCodeAt(cursor))) word += str[cursor++];
-      this._tokenLenght = cursor;
+    //check for not
+    if (this.checkIfNot(str[cursor])) {
+      this._tokenLenght = 1;
       return {
-        type: "WORD",
-        value: word,
+        type: "NOT",
+        value: "!",
+      };
+    }
+
+    //check for and
+    if (this.checkIfAnd(str[cursor]) && this.checkIfAnd(str[cursor + 1])) {
+      this._tokenLenght = 2;
+      return {
+        type: "AND",
+        value: "&&",
       };
     }
 
     //check for Parentheses
-    if (this.checkIfOpenParentheses(str.charCodeAt(cursor))) {
+    if (this.checkIfOpenParentheses(str[cursor])) {
       this._tokenLenght = 1;
       return {
         type: "OPAREN",
         value: "(",
       };
     }
-    if (this.checkIfCloseParentheses(str.charCodeAt(cursor))) {
+    if (this.checkIfCloseParentheses(str[cursor])) {
       this._tokenLenght = 1;
       return {
         type: "CPAREN",
@@ -220,14 +202,14 @@ class Tokenizer {
     }
 
     //check for Brackets
-    if (this.checkIfOpenBracket(str.charCodeAt(cursor))) {
+    if (this.checkIfOpenBracket(str[cursor])) {
       this._tokenLenght = 1;
       return {
         type: "OBRACKET",
         value: "[",
       };
     }
-    if (this.checkIfCloseBracket(str.charCodeAt(cursor))) {
+    if (this.checkIfCloseBracket(str[cursor])) {
       this._tokenLenght = 1;
       return {
         type: "CBRACKET",
@@ -235,30 +217,19 @@ class Tokenizer {
       };
     }
 
-    //check for Dot
-    if (this.checkIfComma(str.charCodeAt(cursor))) {
+    //check for Angular Brackets
+    if (this.checkIfOpenAngleBracket(str[cursor])) {
       this._tokenLenght = 1;
       return {
-        type: "COMMA",
-        value: ",",
+        type: "OANGB",
+        value: "<",
       };
     }
-
-    //check for Symbol
-    if (this.checkIfSymbol(str.charCodeAt(cursor))) {
+    if (this.checkIfCloseAngleBracket(str[cursor])) {
       this._tokenLenght = 1;
       return {
-        type: "SYMBOL",
-        value: str[cursor],
-      };
-    }
-
-    //check for Dot
-    if (this.checkIfDot(str.charCodeAt(cursor))) {
-      this._tokenLenght = 1;
-      return {
-        type: "DOT",
-        value: ".",
+        type: "CANGB",
+        value: ">",
       };
     }
 
@@ -295,20 +266,7 @@ class Tokenizer {
       walked += this._tokenLenght;
       str = this.prune(str);
     }
-    let json = JSON.stringify(tokens, null, 2);
-    this.tokensToTxt(json);
-  }
-
-  tokensToTxt(json) {
-    // Requiring fs module in which
-    // writeFile function is defined.
-    const fs = require("fs");
-
-    // Write data in 'Output.txt' .
-    fs.writeFile("Output.json", json, (err) => {
-      // In case of a error throw err.
-      if (err) throw err;
-    });
+    return tokens;
   }
 }
 

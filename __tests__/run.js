@@ -3,8 +3,12 @@
  */
 
 const { Tokenizer } = require("../src/tokenizer");
+const { Parser } = require("../src/parser");
+const { TxtWoker } = require("../src/txtWorker");
 
 const tokenizer = new Tokenizer();
+const parser = new Parser();
+const txtWorker = new TxtWoker();
 
 //const program = `42`;
 //const program = `42 1`;
@@ -16,11 +20,20 @@ const tokenizer = new Tokenizer();
 //const program = ` 42`; //space
 //const program = ` "42"`;
 //const program = `"hellow my brodi"`;
-const program = `[adopt] ([adopt]Phi)`;
+//const program = `[adopt] (![adopt]&&PHI)3`;
 //const program = `42`;
 //const program = `42`;
+//const program = `(![adopt]N(a,b)&&![adopt]N(a,b))&&![adopt]N(a,b)`;
+const program = `(![adopt]N(a,b)&&![adopt]N(a,b))&&![adopt]N(a,b)`;
+//const program = `!(N(ana,joao))B(ana,teste)`;
+//const program = `N(ana,joao)&&N(ana,maria)`;
 
-tokenizer.tokenize(program);
+let tokens = tokenizer.tokenize(program);
+let jsonTokens = JSON.stringify(tokens, null, 2);
+txtWorker.tokensToTxt(jsonTokens, "tokens.json");
+let parseTree = parser.parse(tokens);
+let jsonTree = JSON.stringify(parseTree, null, 2);
+txtWorker.tokensToTxt(jsonTree, "parseTree.json");
 
 // console.log(JSON.stringify(ast, null, 2));
 
