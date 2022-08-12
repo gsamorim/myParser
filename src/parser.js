@@ -24,7 +24,7 @@ class Parser {
   Program() {
     return {
       type: "Program",
-      body: this.andCheck(),
+      child: this.andCheck(),
     };
     // while (this._tokenIterator < this._tokens.length) {
     //   let subTree = this.newStm(this.getStarter());
@@ -43,7 +43,10 @@ class Parser {
 
   andCheck() {
     let subTree = this.newStm(this.getStarter());
-    //return here is no And found
+    // console.log(
+    //   subTree + "+" + this._tokenIterator + "+" + this._tokens.length
+    // );
+    //return here if no And found
     if (this._tokenIterator === this._tokens.length) return subTree;
 
     //otherwise start an array of childs for subtrees to AND statement
@@ -60,10 +63,14 @@ class Parser {
         childs.push(newSubTree);
       }
     }
-    return {
-      type: "AndStm",
-      child: childs,
-    };
+    if (childs.length == 2) {
+      return {
+        type: "AndStm",
+        child: childs,
+      };
+    } else if (childs.length == 1) {
+      return subTree;
+    }
   }
 
   /**
@@ -140,8 +147,8 @@ class Parser {
         this._eat("CPAREN", sequenceType);
         return {
           type: sequenceType,
-          agent1: agentOfB,
-          agent2: behavior,
+          agent: agentOfB,
+          behavior: behavior,
         };
       case "K":
         //***************** */

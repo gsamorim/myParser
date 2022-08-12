@@ -1,0 +1,45 @@
+{
+  "type": "AndStm",
+  "child": [
+    {
+      "type": "AdoptStm",
+      "child": [
+        {
+          "type": "AdoptStm",
+          "child": [
+            {
+              "type": "BehaviorStm",
+              "agent": {
+                "type": "WORD",
+                "value": "a",
+                "start": 18,
+                "length": 1
+              },
+              "behavior": {
+                "type": "WORD",
+                "value": "b1",
+                "start": 20,
+                "length": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "NeighborStm",
+      "agent1": {
+        "type": "WORD",
+        "value": "a",
+        "start": 32,
+        "length": 1
+      },
+      "agent2": {
+        "type": "WORD",
+        "value": "b",
+        "start": 34,
+        "length": 1
+      }
+    }
+  ]
+}
