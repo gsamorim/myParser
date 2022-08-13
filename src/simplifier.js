@@ -1,7 +1,5 @@
 //remove commands that don't matter for execution
 
-const { parse } = require("path");
-
 //adds elements for treeview
 class Simple {
   startReduction(ast) {
