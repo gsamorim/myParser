@@ -28,7 +28,7 @@ const simple = new Simple();
 //const program = `(![adopt]N(a,b)&&![adopt]N(a,b))&&![adopt]N(a,b)`;
 //const program = `(![adopt]N(a,b)&&![adopt]N(a,b))&&![adopt]N(a,b)`;
 //const program = `([adopt][adopt](B(a,b1)) && N(a,b))`;
-const program = `([adopt][adopt](B(a,b1)) && ((N(a,b))))`;
+const program = `([adopt][adopt](B(a,b1)) && ((N(1,b))))`;
 //const program = `B(a,b1) && B(a,b1)`;
 //const program = `[adopt][adopt](((B(a,b1))))`;
 
