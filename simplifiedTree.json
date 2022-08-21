@@ -3,21 +3,37 @@
   "child": [
     {
       "type": "AdoptStm",
+      "behavior": null,
       "child": {
         "type": "AdoptStm",
+        "behavior": {
+          "type": "NUMBER",
+          "value": "1",
+          "start": 16,
+          "length": 1
+        },
         "child": {
-          "type": "BehaviorStm",
-          "agent": {
-            "type": "WORD",
-            "value": "a",
-            "start": 18,
-            "length": 1
-          },
+          "type": "AdoptStm",
           "behavior": {
             "type": "WORD",
-            "value": "b1",
-            "start": 20,
-            "length": 2
+            "value": "a a",
+            "start": 26,
+            "length": 3
+          },
+          "child": {
+            "type": "BehaviorStm",
+            "agent": {
+              "type": "WORD",
+              "value": "a",
+              "start": 33,
+              "length": 1
+            },
+            "behavior": {
+              "type": "WORD",
+              "value": "b1",
+              "start": 35,
+              "length": 2
+            }
           }
         }
       }
@@ -26,14 +42,14 @@
       "type": "NeighborStm",
       "agent1": {
         "type": "WORD",
-        "value": "a",
-        "start": 32,
-        "length": 1
+        "value": "a a",
+        "start": 47,
+        "length": 3
       },
       "agent2": {
-        "type": "WORD",
-        "value": "b",
-        "start": 34,
+        "type": "NUMBER",
+        "value": "3",
+        "start": 51,
         "length": 1
       }
     }
